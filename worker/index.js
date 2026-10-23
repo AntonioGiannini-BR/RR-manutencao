@@ -45,4 +45,30 @@ function staticResponse(request){
   const ext=key.slice(key.lastIndexOf('.'));
   return new Response(binary,{headers:{'content-type':mimeTypes[ext]||'application/octet-stream','cache-control':key.includes('/assets/')?'public, max-age=31536000, immutable':'no-cache'}});
 }
-export default {async fetch(request,env,ctx){const u=new URL(request.url);if(u.pathname.startsWith('/api/'))return handleApi(request,env);return staticResponse(request)}};
+const ALLOWED_ORIGIN = "https://antoniogiannini-br.github.io";
+
+export default {
+  async fetch(request, env, ctx) {
+    const url = new URL(request.url);
+
+    if (!url.pathname.startsWith("/api/")) {
+      return staticResponse(request);
+    }
+
+    const response = await handleApi(request, env);
+    const headers = new Headers(response.headers);
+
+    if (request.headers.get("Origin") === ALLOWED_ORIGIN) {
+      headers.set("Access-Control-Allow-Origin", ALLOWED_ORIGIN);
+      headers.set("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+      headers.set("Access-Control-Allow-Headers", "Content-Type,Authorization");
+      headers.set("Vary", "Origin");
+    }
+
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    });
+  },
+};
