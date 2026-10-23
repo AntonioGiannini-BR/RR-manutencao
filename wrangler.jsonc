@@ -1,0 +1,6 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "rr-manutencao",
+  "main": "./dist/server/index.js",
+  "compatibility_date": "2026-10-23"
+}
