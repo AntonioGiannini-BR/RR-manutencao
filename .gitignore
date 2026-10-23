@@ -1,0 +1,11 @@
+dist/
+node_modules/
+site.tar.gz
+
+outputs/
+
+worker/assets.js
+.neon
+.env
+.env.*
+!.env.example
